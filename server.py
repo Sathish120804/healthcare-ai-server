@@ -2,53 +2,66 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Store latest action
+# ===================================
+# STORE LATEST ACTION
+# ===================================
+
 latest_data = {
     "value": "NONE"
 }
 
-# -----------------------------------
+# ===================================
 # UPDATE DATA FROM AI
-# -----------------------------------
+# ===================================
 
 @app.route('/update', methods=['POST'])
 def update():
 
     global latest_data
 
-    latest_data = request.json
+    data = request.get_json()
 
-    print("Updated:", latest_data)
+    if data:
+
+        latest_data = data
+
+        print("Updated:", latest_data)
+
+        return jsonify({
+            "status": "success",
+            "data": latest_data
+        })
 
     return jsonify({
-        "status": "success"
-    })
+        "status": "failed"
+    }), 400
 
-# -----------------------------------
+# ===================================
 # SEND DATA TO FLUTTER
-# -----------------------------------
+# ===================================
 
-@app.route('/data')
+@app.route('/data', methods=['GET'])
 def data():
 
     return jsonify(latest_data)
 
-# -----------------------------------
+# ===================================
 # HOME
-# -----------------------------------
+# ===================================
 
 @app.route('/')
 def home():
 
     return "Healthcare AI Server Running"
 
-# -----------------------------------
-# RUN SERVER
-# -----------------------------------
+# ===================================
+# RUN LOCAL SERVER
+# ===================================
 
 if __name__ == '__main__':
 
     app.run(
         host='0.0.0.0',
-        port=5000
+        port=5000,
+        debug=True
     )
