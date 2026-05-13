@@ -33,9 +33,6 @@ face_mesh = mp_face.FaceMesh(
 
     refine_landmarks=True,
 
-    # LOWER CONFIDENCE
-    # BETTER INITIAL DETECTION
-
     min_detection_confidence=0.5,
 
     min_tracking_confidence=0.5
@@ -49,7 +46,7 @@ face_mesh = mp_face.FaceMesh(
 # 1 = DroidCam
 # 2 = External Camera
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # ===================================
 # CHECK CAMERA
@@ -88,6 +85,31 @@ action_counter = 0
 required_frames = 5
 
 print("Healthcare AI Monitoring Started...")
+
+# ===================================
+# SEND CAMERA CONNECTED STATUS
+# ===================================
+
+try:
+
+    response = requests.post(
+
+        server_url,
+
+        json={
+            "value": "CAMERA_CONNECTED"
+        },
+
+        timeout=3,
+
+        verify=False
+    )
+
+    print("Camera Connected Status Sent")
+
+except Exception as e:
+
+    print("SERVER ERROR:", e)
 
 # ===================================
 # MAIN LOOP
